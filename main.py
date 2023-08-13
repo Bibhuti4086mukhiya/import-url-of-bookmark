@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[9]:
-
-
 import os
 
 def get_chrome_bookmarks_path():
@@ -16,68 +10,51 @@ def get_chrome_bookmarks_path():
     else:
         raise OSError("Unsupported operating system.")
 
-# Usage example
-bookmarks_path = get_chrome_bookmarks_path()
-# print("Chrome bookmarks path:",bookmarks_path)
-# print(os.startfile(bookmarks_path))
-
-
-# In[11]:
-
-
 def read_unknown_file(file_path):
     with open(file_path, 'rb') as file:
         contents = file.read()
     return contents
-# Usage example
-file_path = bookmarks_path
-try:
-    file_contents = read_unknown_file(file_path)
-    # print("File contents: successful read path", )
-except Exception as e:
-    print("Error reading the file:", str(e))
 
-
-# In[12]:
-
+def file_path():
+    filePath = get_chrome_bookmarks_path()
+    try:
+        file_contents = read_unknown_file(filePath)
+        return file_contents
+    except Exception as e:
+        print("Error reading the file:", str(e))
 
 import json
-file_dict = json.loads(file_contents)
 
-
-# In[14]:
-
-
-data={
+def collecting(file_dict):
+    data={
      "BookMarks":
         [{
             "title":"",
             "url":""
         }],
     }
-for i in file_dict['roots']['bookmark_bar']['children']:
-    try:
-        if [i][0]['name']=='' or [i][0]['url']=='':
-            continue
-        data['BookMarks'] +=[{ "title":f"{[i][0]['name']}",
-                              "url: ":f"{[i][0]['url']}"
-                            }]
-        updated_json = json.dumps(data, indent=2) 
-    except:
-        pass
-# print(updated_json)
+    for i in file_dict['roots']['bookmark_bar']['children']:
+        try:
+            if [i][0]['name']=='' or [i][0]['url']=='':
+                continue
+            data['BookMarks'] +=[{ "title":f"{[i][0]['name']}",
+                                "url: ":f"{[i][0]['url']}"
+                                }]
+            json.dumps(data, indent=2) 
+        except:
+            pass
+    return data
 
 
-# In[15]:
+def main():
+    contents=file_path()
+    file_dict = json.loads(contents)
+    data=collecting(file_dict)
+    return data
 
-
-save_file = open("output.json", "w")  
-json.dump(data, save_file, indent = 6)  
+save_file = open("output.json", "w") 
+data= main()
+json.dump(data, save_file, indent = 4)  
 save_file.close()  
-
-
-# In[ ]:
-
-
 
 
